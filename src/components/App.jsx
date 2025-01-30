@@ -8,6 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import AppContext from "../context/AppContext";
 import Ducks from "./Ducks";
 import Login from "./Login";
 import MyProfile from "./MyProfile";
@@ -72,50 +73,52 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route
-        path="/ducks"
-        element={
-          <ProtectedRoute isLoggedIn={isLoggedIn}>
-            <Ducks />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/my-profile"
-        element={
-          <ProtectedRoute isLoggedIn={isLoggedIn}>
-            <MyProfile userData={userData} />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <div className="loginContainer">
-            <Login handleLogin={handleLogin} />
-          </div>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <div className="registerContainer">
-            <Register handleRegistration={handleRegistration} />
-          </div>
-        }
-      />
-      <Route
-        path="*"
-        element={
-          isLoggedIn ? (
-            <Navigate to="/ducks" replace />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-    </Routes>
+    <AppContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+      <Routes>
+        <Route
+          path="/ducks"
+          element={
+            <ProtectedRoute>
+              <Ducks />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute>
+              <MyProfile userData={userData} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <div className="loginContainer">
+              <Login handleLogin={handleLogin} />
+            </div>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <div className="registerContainer">
+              <Register handleRegistration={handleRegistration} />
+            </div>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/ducks" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+      </Routes>
+    </AppContext.Provider>
   );
 }
 
